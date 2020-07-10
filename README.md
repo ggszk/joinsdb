@@ -19,4 +19,8 @@
 
 ## Usage
 
-* Please read example.py.
+* Please read example.py
+
+## Sample Neo4j database
+
+* Please execute ./test/sample_db.cypher on Neo4j browser
