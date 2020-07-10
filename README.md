@@ -4,7 +4,7 @@
 
 * On memory graph
 * Simple graph database: built on Neo4j but only has the ability to get adjecent nodes
-  * for experiment of distributed graph algorythm...
+  * for experiment of distributed graph algorithm...
 * Neo4j
 
 ## Now implemented
