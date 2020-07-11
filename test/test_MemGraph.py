@@ -1,9 +1,10 @@
 import pytest
 import sys
 sys.path.append('..')
+sys.path.append('../drivers')
 
 from joinsdb import JoinsDb
-from jdb_st_MemGraph import MemGraph
+from MemGraph import MemGraph
 
 # sample
 # adjacent list, both direction, element is (node_id, cost)

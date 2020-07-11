@@ -1,9 +1,10 @@
 import pytest
 import sys
 sys.path.append('..')
+sys.path.append('../drivers')
 
 from joinsdb import JoinsDb
-from jdb_st_SimpleGraphDb import SimpleGraphDb
+from SimpleGraphDb import SimpleGraphDb
 
 # for Neo4j connection
 uri = "bolt://localhost:7687"

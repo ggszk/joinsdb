@@ -1,4 +1,4 @@
-from jdb_st_Neo4j import Neo4j
+from Neo4j import Neo4j
 
 # Very simple graphdb interface
 class SimpleGraphDb:

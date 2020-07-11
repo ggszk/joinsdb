@@ -1,8 +1,10 @@
 #
 # Samples for using JoinsDb
 #
-from jdb_st_MemGraph import MemGraph
-from jdb_st_SimpleGraphDb import SimpleGraphDb
+import sys
+sys.path.append('./drivers')
+from MemGraph import MemGraph
+from SimpleGraphDb import SimpleGraphDb
 from joinsdb import JoinsDb
 
 # adjacent list, both direction, element is (node_id, cost)
