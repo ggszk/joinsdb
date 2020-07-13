@@ -21,10 +21,30 @@ g2 = [
     [(0, 6), (8, 7)]
 ]
 
+# if poi -> 1, else -> 0
+interest = [0, 0, 0, 1, 0, 0, 0, 0, 0, 1]
+
+# insert interest information to adjacent list of graph
+def insert_poi(g, poi) :
+    result = []
+    for n in g2 :
+        record = []
+        for e in n :
+            record.append((e[0], e[1], poi[e[1]]))
+        result.append(record)
+    return result
+
+g2_poi = insert_poi(g2, interest)
+
 # memory storage sample
 jdb = JoinsDb()
 jdb.setStorage(MemGraph(g2))
 result = jdb.dijkstra(0, 8)
+print(result)
+
+# trip planning query (one poi) sample
+jdb.setStorage(MemGraph(g2_poi))
+result = jdb.one_poi_trip(0, 8, 1)
 print(result)
 
 # neo4j storage sample
