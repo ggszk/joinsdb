@@ -57,3 +57,13 @@ jdb.setStorage(SimpleGraphDb({
 print(jdb.getNextNodes(0))
 result = jdb.dijkstra(0, 2)
 print(result)
+
+# trip planning query on Neo4j
+jdb.setStorage(SimpleGraphDb({
+    'uri' : "bolt://localhost:7687",
+    'user' : "neo4j",
+    'passwd' :"neo4jneo4j",
+    'label' : "g2"
+}))
+result = jdb.one_poi_trip(0, 8, 1)
+print(result)

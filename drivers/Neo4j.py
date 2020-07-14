@@ -28,7 +28,10 @@ class Neo4j :
                     for node in neo_record[key].nodes :
                         # Remark: 'n_id' attribute must be on all nodes which is user defined node id (for ease debug...)
                         node_id_list.append(node.get('n_id'))
-                    record.append(node_id_list)                   
+                    record.append(node_id_list)
+                # null case: do nothing
+                elif neo_record[key] == None :
+                    pass
                 # Node or Relationship case
                 else :
                     columns_obj = {}

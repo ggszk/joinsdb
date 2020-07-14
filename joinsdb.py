@@ -143,7 +143,7 @@ class JoinsDb:
                 # expand next nodes
                 n_nodes_f = self.getNextNodes(cur_id_f)
                 for node in n_nodes_f:
-                    print("f: \t" + str(node[0]) + " " + str(node[1]) + " " + str(cost_f.get(node[0]))) # for debug
+                    #print("f: \t" + str(node[0]) + " " + str(node[1]) + " " + str(cost_f.get(node[0]))) # for debug
                     if not fixed_f.get(node[0]) :
                         # node[2] is interest
                         heapq.heappush(pq_f, (cur_cost_f + node[1], node[0], cur_id_f, node[2]))
@@ -156,8 +156,7 @@ class JoinsDb:
                     continue
                 #  If POI is found, check total path
                 if cur_node_t_t[2] == interest :
-                    print(cur_node_t_t)
-                    print("t: poi: " + str(cur_node_t_t[1]))
+                    # print("t: poi: " + str(cur_node_t_t[1])) # for debug
                     # if find the POI node in the other side, put into temp result
                     if fixed_f.get(cur_node_t_t[1]) :
                         poi_id = cur_node_t_t[1]
@@ -170,7 +169,7 @@ class JoinsDb:
                 # expand next nodes
                 n_nodes_t = self.getNextNodes(cur_id_t)
                 for node in n_nodes_t:
-                    print("t: \t" + str(node[0]) + " " + str(node[1]) + " " + str(cost_t.get(node[0]))) # for debug
+                    #print("t: \t" + str(node[0]) + " " + str(node[1]) + " " + str(cost_t.get(node[0]))) # for debug
                     if not fixed_t.get(node[0]) :
                         # node[2] is interest
                         heapq.heappush(pq_t, (cur_cost_t + node[1], node[0], cur_id_t, node[2]))

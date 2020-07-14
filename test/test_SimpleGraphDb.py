@@ -21,7 +21,7 @@ passwd = "neo4jneo4j"
     ),
         (
         0,
-        [(2, 4), (9, 6), (1, 3)],
+        [(2, 4, 0), (9, 6, 1), (1, 3, 0)],
         8,
         (12, [0, 1, 3, 5, 8]),
         "g2"
@@ -46,3 +46,13 @@ def test_SimpleGraphDb(from_id, result, to_id, dijkstra_result, label) :
     assert jdb.getNextNodes(from_id) == result
     assert jdb.dijkstra(from_id, to_id) == dijkstra_result
 
+# test trip planning query on Neo4j
+def test_tpq() :
+    jdb = JoinsDb()
+    jdb.setStorage(SimpleGraphDb({
+        'uri' : "bolt://localhost:7687",
+        'user' : "neo4j",
+        'passwd' :"neo4jneo4j",
+        'label' : "g2"
+    }))
+    assert jdb.one_poi_trip(0, 8, 1) == (12, [0, 1, 3, 5, 8], 3)

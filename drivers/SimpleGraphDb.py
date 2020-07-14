@@ -18,7 +18,7 @@ class SimpleGraphDb:
         label = self.label
         rel_type = "CONNECT_TO"
         cypher_str = "match (n:" + label + ")-[r:" + rel_type + \
-            "]->(m:" + label + ") where n.n_id = " + str(node_id) + " return m.n_id, r.cost"
+            "]->(m:" + label + ") where n.n_id = " + str(node_id) + " return m.n_id, r.cost, m.interest"
         # print(cypher_str) # for debug
         return_ids = self.neo4j.executeQuery(cypher_str)
 
