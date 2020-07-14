@@ -10,6 +10,10 @@ class JoinsDb:
     def setStorage(self, st) :
         self.storage = st
 
+    # Pass through query execution
+    def executeQuery(self, query) :
+        return self.storage.executeQuery(query)
+    
     # Get adjacent nodes
     def getNextNodes(self, node_id):
         return self.storage.getNextNodes(node_id)
@@ -69,6 +73,7 @@ class JoinsDb:
     
     # Simple trip planning query using bidirectional dijkstra
     # Shortest path through one point of interest
+    # Returns (cost, path, id of poi)
     def one_poi_trip(self, from_id, to_id, interest) :
         # fixed cost to the node: key: node_id, value: cost
         cost_f = {}
