@@ -1,0 +1,11 @@
+create table g2_r (n_id integer, interest integer);
+insert into g2_r values (0, 0);
+insert into g2_r values (1, 3);
+insert into g2_r values (2, 0);
+insert into g2_r values (3, 0);
+insert into g2_r values (4, 0);
+insert into g2_r values (5, 0);
+insert into g2_r values (6, 0);
+insert into g2_r values (7, 0);
+insert into g2_r values (8, 0);
+insert into g2_r values (9, 1);

@@ -6,6 +6,7 @@ sys.path.append('./drivers')
 from Neo4j import Neo4j
 from MemGraph import MemGraph
 from SimpleGraphDb import SimpleGraphDb
+from SQLite import SQLite
 from joinsdb import JoinsDb
 
 # adjacent list, both direction, element is (node_id, cost)
@@ -77,4 +78,10 @@ jdb.setStorage(SimpleGraphDb({
     'label' : "g2"
 }))
 result = jdb.one_poi_trip(0, 8, 1)
+print(result)
+
+# SQLite sample
+jdb.setStorage(SQLite("test/sample.sqlite3"))
+result = jdb.executeQuery("select * from g2_r")
+jdb.close()
 print(result)

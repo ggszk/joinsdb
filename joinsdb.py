@@ -14,6 +14,10 @@ class JoinsDb:
     def executeQuery(self, query) :
         return self.storage.executeQuery(query)
     
+    # Close connection
+    def close(self) :
+        self.storage.close()
+    
     # Get adjacent nodes
     def getNextNodes(self, node_id):
         return self.storage.getNextNodes(node_id)
