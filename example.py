@@ -2,11 +2,13 @@
 # Samples for using JoinsDb
 #
 import sys
+import pprint
 sys.path.append('./drivers')
 from Neo4j import Neo4j
 from MemGraph import MemGraph
 from SimpleGraphDb import SimpleGraphDb
 from SQLite import SQLite
+from SimpleMultiDb import SimpleMultiDb
 from joinsdb import JoinsDb
 
 # adjacent list, both direction, element is (node_id, cost)
@@ -85,3 +87,43 @@ jdb.setStorage(SQLite("test/sample.sqlite3"))
 result = jdb.executeQuery("select * from g2_r")
 jdb.close()
 print(result)
+
+# Simple multi-database sample
+smdb = SimpleMultiDb([{
+        'uri' : "bolt://localhost:7687",
+        'user' : "neo4j",
+        'passwd' :"neo4jneo4j",
+        'label' : "g2"
+    },
+    {
+        'db' : "test/sample.sqlite3",
+        'table' : "g2_r"
+    }
+])
+r1 = [(1, 2), (2, 3)]
+r2 = [(1, 4), (3, 5)]
+result = smdb.join(r1, r2, (0, 0), "eq")
+result2 = smdb.project(result, (0, 1, 2))
+pprint.pprint(result2, width=50)
+
+result3 = smdb.getNextNodes(0)
+print(result3)
+smdb.close()
+
+# trip plannning query on simple multi database
+jdb.setStorage(SimpleMultiDb([{
+        'uri' : "bolt://localhost:7687",
+        'user' : "neo4j",
+        'passwd' :"neo4jneo4j",
+        'label' : "g2"
+    },
+    {
+        'db' : "test/sample.sqlite3",
+        'table' : "g2_r"
+    }
+]))
+result = jdb.one_poi_trip(0, 8, 1)
+print(result)
+
+
+

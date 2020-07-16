@@ -10,14 +10,16 @@
 
 ## Now implemented
 
+* Wrappers of the target storage engines (SQL and Cypher execution).
 * Dijkstra search on memory graph and on simple graph database
-* Wrapper of the target storage engines (SQL and Cypher execution).
+* Simple trip planning query: find path throgh one point of interest (poi)
+* Simple trip planning query on Neo4j + SQLite
 
 ## Will be implemented
 
 * Unified query interface using PartiQL
 * Query across to heterogeneous databases
-* Trip plannning query on distributed environment
+* Trip planning query on distributed environment
 
 ## Usage
 
