@@ -34,7 +34,7 @@ def insert_poi(g, poi) :
     for n in g2 :
         record = []
         for e in n :
-            record.append((e[0], e[1], poi[e[1]]))
+            record.append((e[0], e[1], poi[e[0]]))
         result.append(record)
     return result
 
@@ -49,6 +49,9 @@ print(result)
 # trip planning query (one poi) sample
 jdb.setStorage(MemGraph(g2_poi))
 result = jdb.one_poi_trip(0, 8, 1)
+print(result)
+result = jdb.one_poi_trip2(0, 8, 1)
+print("#poi2#")
 print(result)
 
 # neo4j storage sample

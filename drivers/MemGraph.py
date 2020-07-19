@@ -15,3 +15,17 @@ class MemGraph:
     # Get adjacent nodes
     def getNextNodes(self, node_id):
         return self.adj_map[node_id]
+
+     # Get node by specifing attribute value
+    def getNode(self, value) :
+        # extracting attribute value from adj map
+        attribute = {}
+        for n in self.adj_map :
+            for e in n :
+                attribute[e[0]] = e[2]
+        # find node ids
+        result = []
+        for key in attribute :
+            if attribute[key] == value :
+                result.append(key)
+        return result

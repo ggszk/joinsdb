@@ -22,6 +22,10 @@ class JoinsDb:
     def getNextNodes(self, node_id):
         return self.storage.getNextNodes(node_id)
 
+    # Get node by specifing attribute value
+    def getNode(self, value) :
+        return self.storage.getNode(value)
+
     # Shortest path, dijkstra
     # Returns (cost, path)
     def dijkstra(self, from_id, to_id):
@@ -183,4 +187,35 @@ class JoinsDb:
                         # node[2] is interest
                         heapq.heappush(pq_t, (cur_cost_t + node[1], node[0], cur_id_t, node[2]))
                
+        return result
+
+    # Shortest path through one point of interest
+    # another method : find pois first
+    # Returns (cost, path, id of poi)
+    def one_poi_trip2(self, from_id, to_id, interest) :
+        # find pois
+        pois =  self.getNode(interest)
+        print(pois)
+
+        # find path between poi and from- or to-node
+        paths = []
+        for poi in pois :
+            # find from-poi path
+            from_path = self.dijkstra(from_id, poi)
+            # find poi-to path
+            to_path = self.dijkstra(poi, to_id)
+            # concatenate two paths
+            paths.append(self.cat_path(from_path, to_path) + (poi,))
+        # sort results and find the shortest
+
+        return self.orderby(paths, 0)[0]
+
+    # concatenate two paths (result of digkstra: (cost, path))
+    def cat_path(self, path1, path2) :
+        return (path1[0] + path2[0], path1[1][:-1] + path2[1])
+
+    # sort result
+    # index must be integer (= multi column sort is not supported)
+    def orderby(self, r, index) :
+        result = sorted(r, key=lambda x: x[index])
         return result
