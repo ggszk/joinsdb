@@ -25,6 +25,14 @@ class JoinsDb:
     # Get node by specifing attribute value
     def getNode(self, value) :
         return self.storage.getNode(value)
+    
+    # Set property values of all nodes at once (for only MemGraph)
+    def setProperty(self, p) :
+        self.storage.setProperty(p)
+    
+    # Get property of the node
+    def getProperty(self, node_id) :
+        return self.storage.getProperty(node_id)
 
     # Shortest path, dijkstra
     # Returns (cost, path)
@@ -158,8 +166,8 @@ class JoinsDb:
                 for node in n_nodes_f:
                     #print("f: \t" + str(node[0]) + " " + str(node[1]) + " " + str(cost_f.get(node[0]))) # for debug
                     if not fixed_f.get(node[0]) :
-                        # node[2] is interest
-                        heapq.heappush(pq_f, (cur_cost_f + node[1], node[0], cur_id_f, node[2]))
+                        # set (cost, node, parent, interest)
+                        heapq.heappush(pq_f, (cur_cost_f + node[1], node[0], cur_id_f, self.getProperty(node[0])))
 
             # expand to-side : compare cost of top of the queues
             else :
@@ -184,8 +192,8 @@ class JoinsDb:
                 for node in n_nodes_t:
                     #print("t: \t" + str(node[0]) + " " + str(node[1]) + " " + str(cost_t.get(node[0]))) # for debug
                     if not fixed_t.get(node[0]) :
-                        # node[2] is interest
-                        heapq.heappush(pq_t, (cur_cost_t + node[1], node[0], cur_id_t, node[2]))
+                        # set (cost, node, parent, interest)
+                        heapq.heappush(pq_t, (cur_cost_t + node[1], node[0], cur_id_t, self.getProperty(node[0])))
                
         return result
 

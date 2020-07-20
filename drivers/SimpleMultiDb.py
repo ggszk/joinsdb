@@ -27,6 +27,7 @@ class SimpleMultiDb:
     def close(self):
         self.sqlite.close()
 
+    # Get adjacent nodes from Neo4j
     def getNextNodes(self, node_id):
         return_ids = []
         # default label and relationship type
@@ -37,11 +38,13 @@ class SimpleMultiDb:
         # print(cypher_str) # for debug
         return_ids = self.neo4j.executeQuery(cypher_str)
 
-        # getting interest data from SQLite
-        return_interests =  self.sqlite.executeQuery("select n_id, interest from " + self.table)
+        return return_ids
 
-        return self.project(self.join(return_ids, return_interests, (0, 0), "eq"), (0 ,1, 3))
-    
+    # Get property of the node from SQLite
+    def getProperty(self, node_id) :
+        return_interests =  self.sqlite.executeQuery("select interest from " + self.table + " where n_id = " + str(node_id))
+        return return_interests[0]
+
     # join operator
     # r1, r2: target relations
     # index : index of join key. for example (1, 2) means key of t1 is 1, and key of t2 is 2 

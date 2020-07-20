@@ -12,7 +12,7 @@
 
 * Wrappers of the target storage engines (SQL and Cypher execution).
 * Dijkstra search on memory graph and on simple graph database
-* Simple trip planning query: find path throgh one point of interest (poi)
+* Simple trip planning query: find path through one point of interest (poi)
 * Simple trip planning query on Neo4j + SQLite
 
 ## Will be implemented
