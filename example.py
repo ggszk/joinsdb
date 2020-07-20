@@ -72,6 +72,8 @@ jdb.setStorage(SimpleGraphDb({
 }))
 result = jdb.one_poi_trip(0, 8, 1)
 print(result)
+result = jdb.one_poi_trip2(0, 8, 1)
+print(result)
 
 # SQLite sample
 jdb.setStorage(SQLite("test/sample.sqlite3"))
@@ -114,6 +116,8 @@ jdb.setStorage(SimpleMultiDb([{
     }
 ]))
 result = jdb.one_poi_trip(0, 8, 1)
+print(result)
+result = jdb.one_poi_trip2(0, 8, 1)
 print(result)
 
 

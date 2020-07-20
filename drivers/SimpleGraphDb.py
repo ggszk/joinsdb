@@ -23,6 +23,16 @@ class SimpleGraphDb:
         return_ids = self.neo4j.executeQuery(cypher_str)
 
         return return_ids
+    # Get nodes by specifing attribute value
+    def getNode(self, value) :
+        # default label
+        label = self.label
+        cypher_str = "match (n:" + label + ") where n.interest = " + str(value) + " return n.n_id"
+        result = self.neo4j.executeQuery(cypher_str)
+        result_list = []
+        for r in result :
+            result_list.append(r[0])
+        return result_list
 
     # Get property of the node
     def getProperty(self, node_id) :

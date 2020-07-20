@@ -45,6 +45,14 @@ class SimpleMultiDb:
         return_interests =  self.sqlite.executeQuery("select interest from " + self.table + " where n_id = " + str(node_id))
         return return_interests[0]
 
+    # Get nodes by specifing attribute value
+    def getNode(self, value) :
+        result =  self.sqlite.executeQuery("select n_id from " + self.table + " where interest = " + str(value))
+        result_list = []
+        for r in result :
+            result_list.append(r[0])
+        return result_list
+
     # join operator
     # r1, r2: target relations
     # index : index of join key. for example (1, 2) means key of t1 is 1, and key of t2 is 2 
