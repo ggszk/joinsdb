@@ -35,6 +35,9 @@ g3 = [
     [(4, 4)]
 ]
 
+# if poi -> 1, else -> 0
+interest = [0, 0, 0, 1, 0, 0, 0, 0, 0, 1]
+
 @pytest.mark.parametrize(('graph', 'from_id', 'to_id', 'result'), [
     (
         g1,
@@ -60,3 +63,11 @@ def test_MemGraph(graph, from_id, to_id, result) :
     jdb = JoinsDb()
     jdb.setStorage(MemGraph(graph))
     assert jdb.dijkstra(from_id, to_id) == result
+
+# trip planning query (one poi) sample
+def test_tpq() :
+    jdb = JoinsDb()
+    jdb.setStorage(MemGraph(g2))
+    jdb.setProperty(interest)
+    assert (12, [0, 1, 3, 5, 8], 3) == jdb.one_poi_trip(0, 8, 1)
+    assert (12, [0, 1, 3, 5, 8], 3) == jdb.one_poi_trip2(0, 8, 1)

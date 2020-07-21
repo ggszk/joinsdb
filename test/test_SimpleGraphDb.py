@@ -6,11 +6,6 @@ sys.path.append('../drivers')
 from joinsdb import JoinsDb
 from SimpleGraphDb import SimpleGraphDb
 
-# for Neo4j connection
-uri = "bolt://localhost:7687"
-user = "neo4j"
-passwd = "neo4jneo4j"
-
 @pytest.mark.parametrize(('from_id', 'result', 'to_id', 'dijkstra_result', 'label'), [
     (
         0,
@@ -21,7 +16,7 @@ passwd = "neo4jneo4j"
     ),
         (
         0,
-        [(2, 4, 0), (9, 6, 1), (1, 3, 0)],
+        [(2, 4), (9, 6), (1, 3)],
         8,
         (12, [0, 1, 3, 5, 8]),
         "g2"
@@ -56,3 +51,4 @@ def test_tpq() :
         'label' : "g2"
     }))
     assert jdb.one_poi_trip(0, 8, 1) == (12, [0, 1, 3, 5, 8], 3)
+    assert jdb.one_poi_trip2(0, 8, 1) == (12, [0, 1, 3, 5, 8], 3)

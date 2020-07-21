@@ -203,7 +203,6 @@ class JoinsDb:
     def one_poi_trip2(self, from_id, to_id, interest) :
         # find pois
         pois =  self.getNode(interest)
-        print(pois)
 
         # find path between poi and from- or to-node
         paths = []
