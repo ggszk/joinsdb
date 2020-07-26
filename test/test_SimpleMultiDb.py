@@ -20,12 +20,6 @@ def test_SimpleMultiDb() :
         }
     ])
 
-    # Relational operator test
-    r1 = [(1, 2), (2, 3)]
-    r2 = [(1, 4), (3, 5)]
-    result = smdb.join(r1, r2, (0, 0), "eq")
-    assert [(1, 2, 1)] == smdb.project(result, (0, 1, 2))
-
     # Graph operator test
     assert [(2, 4), (9, 6), (1, 3)] == smdb.getNextNodes(0)
 
