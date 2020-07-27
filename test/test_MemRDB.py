@@ -38,3 +38,6 @@ def test_MemRDB() :
     r2 = db['table4']['data']
     result = rdb.join(r1, r2, (0, 0), "eq")
     assert [(1, 2, 1)] == rdb.project(result, (0, 1, 2))
+    r1 = [(1, 2), (1, 3)]
+    assert [(3,), (4,)] == rdb.call(r1, 'add')
+    assert [(2,), (3,)] == rdb.call(r1, 'multiple')

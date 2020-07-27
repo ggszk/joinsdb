@@ -2,6 +2,8 @@
 #
 # tuple: 
 
+import sys
+
 class MemRDB :
     # initialize
     def __init__(self, param):
@@ -41,3 +43,25 @@ class MemRDB :
                 result_tuple = result_tuple + t[idx:idx+1]
             result.append(result_tuple)
         return result
+
+    # function call
+    # specification of function
+    # - parameters of the function specified in query maps to the functions's parameters
+    # - function must return tuple
+    def call(self, r, func) :
+        ret = []
+        for t in r :
+            f = getattr(self, func)(*t)
+            ret.append(f)
+        return ret
+
+    # function examples
+    # example: "select add('col1', 'col2') from r" return col1 + col2
+    # example: "select add('col1', 3) from r" return col1 + 3
+    def add(self, col1, col2) :
+        return (col1 + col2,)
+
+    # multiple constant to a one column
+    # example: "select multiple('col1', 5) from r" return col1 * 5
+    def multiple(self, col1, col2) :
+        return (col1*col2,)
