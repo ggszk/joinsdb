@@ -41,3 +41,11 @@ def test_MemRDB() :
     r1 = [(1, 2), (1, 3)]
     assert [(3,), (4,)] == rdb.call(r1, 'add')
     assert [(2,), (3,)] == rdb.call(r1, 'multiple')
+
+    # ast execution test
+    ast1 = ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]]]
+    ast2 = ['select', ['project', ['list', ['id', 'col2'], ['id', 'col3']]], ['from', ['as', 'table3', ['id', 'table3']]]]
+    ast3 = ['select', ['project', ['list', ['id', 'col2'], ['call', 'add', ['list', ['id', 'col2'], ['id', 'col3']]]]], ['from', ['as', 'table3', ['id', 'table3']]]]
+    assert [(1,), (2,)] == rdb.execute_ast({}, ast1)
+    assert [(1, 2), (2, 3)] == rdb.execute_ast({}, ast2)
+    assert [(1, 3), (2, 5)] == rdb.execute_ast({}, ast3)
