@@ -31,7 +31,7 @@ class MemRDB :
             # get relation name
             r_name = ast[1][2][1]
             # find relation
-            ret = rel[r_name]
+            ret = self.get_relation(r_name)
         elif ast[0] == 'project' :
             # get column names
             i = 0
@@ -43,6 +43,9 @@ class MemRDB :
                 if i > 0 :
                     if c[0] == 'id' :
                         c_names.append(c[1])
+                    if c[0] == 'path' :
+                        # metadata check is not implemented
+                        c_names.append(c[2][1])
                     if c[0] == 'call' :
                         ft_idxs.append(i)
                         # get relation to adapt the function
@@ -89,6 +92,8 @@ class MemRDB :
             i = i + 1
         return ret
 
+    # meta data functions
+    # get column indexes from specified column names
     def get_columns_index(self, meta, col_names) :
         i = 0
         ret = []
@@ -100,6 +105,18 @@ class MemRDB :
         # cannot find all col_name
         if len(ret) != len(col_names) :
             print('error : column name not found', file=sys.stderr)
+            sys.exit(1)
+        return ret
+
+    # get relation from specified relation name
+    def get_relation(self, rel_name) :
+        ret = None # None: not found
+        for r in self.db :
+            if r['name'] == rel_name :
+                ret = r
+        # cannot find relation
+        if ret == None :
+            print('error : relation not found', file=sys.stderr)
             sys.exit(1)
         return ret
 
@@ -155,8 +172,9 @@ class MemRDB :
     def multiple(self, col1, col2) :
         return (col1*col2,)
 
-db = {
-    'table1' : {
+db = [
+    {
+        'name' : 'table1',
         'meta' : ("col1", "col2"),
         'data' : [
             ('v11', 'v12'),
@@ -164,7 +182,8 @@ db = {
             ('v31', 'v32')
         ]
     },
-    'table2' : {
+    {
+        'name' : 'table2',
         'meta' : ("col2", "col3"),
         'data' : [
             ('v12', 'v13'),
@@ -172,20 +191,25 @@ db = {
             ('v32', 'v33')
         ]
     },
-    'table3' : {
+    {
+        'name' : 'table3',
         'meta' : ("col2", "col3"),
         'data' : [(1, 2), (2, 3)]
     },
-    'table4' : {
+    {
+        'name' : 'table4',
         'meta' : ("col2", "col3"),
         'data' : [(1, 4), (3, 5)]
     }
-}
+]
 
-ast1 = ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]]]
-ast2 = ['select', ['project', ['list', ['id', 'col2'], ['id', 'col3']]], ['from', ['as', 'table3', ['id', 'table3']]]]
-ast3 = ['select', ['project', ['list', ['id', 'col2'], ['call', 'add', ['list', ['id', 'col2'], ['id', 'col3']]]]], ['from', ['as', 'table3', ['id', 'table3']]]]
+ast = [
+    ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]]],
+    ['select', ['project', ['list', ['id', 'col2'], ['id', 'col3']]], ['from', ['as', 'table3', ['id', 'table3']]]],
+    ['select', ['project', ['list', ['id', 'col2'], ['call', 'add', ['list', ['id', 'col2'], ['id', 'col3']]]]], ['from', ['as', 'table3', ['id', 'table3']]]],
+    ['select', ['project', ['list', ['path', ['id', 'table3'], ['id', 'col2']]]], ['from', ['as', 'table3', ['id', 'table3']]]]
+]
+
 mrdb = MemRDB(db)
-print(mrdb.execute_ast({}, ast1))
-print(mrdb.execute_ast({}, ast2))
-print(mrdb.execute_ast({}, ast3))
+for t in ast :
+    print(mrdb.execute_ast({}, t))
