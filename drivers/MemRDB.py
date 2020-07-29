@@ -96,13 +96,13 @@ class MemRDB :
     # meta data functions
     # get column indexes from specified column names
     def get_columns_index(self, meta, col_names) :
-        i = 0
         ret = []
         for c1 in col_names :
+            i = 0
             for c2 in meta :
                 if c1 == c2 :
                     ret.append(i)
-            i = i + 1
+                i = i + 1
         # cannot find all col_name
         if len(ret) != len(col_names) :
             print('error : column name not found', file=sys.stderr)
@@ -150,6 +150,47 @@ class MemRDB :
                 result_tuple = result_tuple + t[idx:idx+1]
             result.append(result_tuple)
         return result
+
+    # selection operator
+    # r: target relation ** with metadata **
+    # cond: condition clause in AST format
+    def selection(self, r, cond) :
+        ret = []
+        for t in r['data'] :
+            if self.eval_cond(r['meta'], t, cond) :
+                    ret.append(t)
+        return ret
+    # condition evaluation of tuple using AST
+    def eval_cond(self, meta, t, ast) :
+        ret = False
+        if ast[0] == 'and' :
+            ret = self.eval_cond(meta, t, ast[1]) and self.eval_cond(meta, t, ast[2])
+            return ret
+        elif ast[0] == 'or' :
+            ret = self.eval_cond(meta, t, ast[1]) or self.eval_cond(meta, t, ast[2])
+            return ret
+        elif ast[0] == '=' :
+            condition = lambda a, b : a == b
+        elif ast[0] == '!=' :
+            condition = lambda a, b : a != b
+        elif ast[0] == '>' :
+            condition = lambda a, b : a > b
+        elif ast[0] == '>=' :
+            condition = lambda a, b : a >= b
+        elif ast[0] == '<' :
+            condition = lambda a, b : a < b
+        elif ast[0] == '<=' :
+            condition = lambda a, b : a <= b
+
+        c_idx = self.get_columns_index(meta, [ast[1][1]])
+        # comparison two columns case
+        if ast[2][0] == 'id' :
+            c_idx_r = self.get_columns_index(meta, [ast[2][1]])
+            ret = condition(t[c_idx[0]], t[c_idx_r[0]])
+        # comparison columns and scalar
+        elif ast[2][0] == 'lit' :
+            ret = condition(t[c_idx[0]], ast[2][1])
+        return ret
 
     # function call
     # specification of function
@@ -201,6 +242,11 @@ ast = [
     ['select', ['project', ['list', ['path', ['id', 't3'], ['id', 'col2']]]], ['from', ['as', 't3', ['id', 'table3']]]]
 ]
 
-mrdb = MemRDB(db)
+rdb = MemRDB(db)
 for t in ast :
-    print(mrdb.execute_ast({}, t))
+    print(rdb.execute_ast({}, t))
+
+r = db[2]
+print(rdb.selection(r, ['=', ['id', 'col2'], ['lit', 1]]))
+print(rdb.selection(r, ['<', ['id', 'col2'], ['id', 'col3']]))
+print(rdb.selection(r, ['and', ['=', ['id', 'col2'], ['lit', 1]], ['!=', ['id', 'col2'], ['lit', 1]]]))

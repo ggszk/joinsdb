@@ -42,9 +42,12 @@ def test_MemRDB() :
     r2 = db[3]['data']
     result = rdb.join(r1, r2, (0, 0), "eq")
     assert [(1, 2, 1)] == rdb.project(result, (0, 1, 2))
-    r1 = [(1, 2), (1, 3)]
-    assert [(3,), (4,)] == rdb.call(r1, 'add')
-    assert [(2,), (3,)] == rdb.call(r1, 'multiple')
+    assert [(3,), (5,)] == rdb.call(r1, 'add')
+    assert [(2,), (6,)] == rdb.call(r1, 'multiple')
+    r = db[2]
+    assert [(1, 2)] == rdb.selection(r, ['=', ['id', 'col2'], ['lit', 1]])
+    assert [(1, 2), (2, 3)] == rdb.selection(r, ['<', ['id', 'col2'], ['id', 'col3']])
+    assert [] == rdb.selection(r, ['and', ['=', ['id', 'col2'], ['lit', 1]], ['!=', ['id', 'col2'], ['lit', 1]]])
 
     # ast execution test
     ast1 = ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]]]
