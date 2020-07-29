@@ -3,17 +3,28 @@
 # tuple: 
 
 import sys
+import os
 from UserDefFunctions import UserDefFunctions
+from lark import Lark
+from partiql_lang import Build_AST
 
 class MemRDB :
     # initialize
     def __init__(self, param):
         self.db = param
+        # file is at current dir or parent dir
+        grammer_file = 'partiql_grammer.lark'
+        if not os.path.exists(grammer_file) :
+            grammer_file = '../' + grammer_file
+        rule = open(grammer_file).read()
+        self.parser = Lark(rule, start="select", parser='lalr')
 
     # Execute partiql query
-    def executeQuery(self, sql):
-        result = []
-        return result
+    def executeQuery(self, query):
+        b = Build_AST()
+        tree = self.parser.parse(query)
+        ast = b.visit(tree)
+        return self.execute_ast({}, ast)
 
     # Execute AST
     # rel: relation to apply operators for recursion (at first call, rel must be {})
@@ -255,3 +266,10 @@ r = db[2]
 print(rdb.selection(r, ['=', ['id', 'col2'], ['lit', 1]]))
 print(rdb.selection(r, ['<', ['id', 'col2'], ['id', 'col3']]))
 print(rdb.selection(r, ['and', ['=', ['id', 'col2'], ['lit', 1]], ['!=', ['id', 'col2'], ['lit', 1]]]))
+
+query = [
+    "SELECT table3.col2, col3 FROM table3",
+    "SELECT add(col2,col3) FROM table3"
+]
+for q in query :
+    print(rdb.executeQuery(q))

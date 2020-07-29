@@ -7,6 +7,7 @@ sys.path.append('./drivers')
 from MemGraph import MemGraph
 from SimpleMultiDb import SimpleMultiDb
 from joinsdb import JoinsDb
+from MemRDB import MemRDB
 
 # adjacent list, both direction, element is (node_id, cost)
 g2 = [
@@ -51,3 +52,24 @@ result = jdb.one_poi_trip(0, 8, 1)
 print(result)
 result = jdb.one_poi_trip2(0, 8, 1)
 print(result)
+
+# Simple RDB on memory
+db = [
+    {
+        'name' : 'table3',
+        'meta' : ("col2", "col3"),
+        'data' : [(1, 2), (2, 3)]
+    },
+    {
+        'name' : 'table4',
+        'meta' : ("col2", "col3"),
+        'data' : [(1, 4), (3, 5)]
+    }
+]
+query = [
+    "SELECT table3.col2, col3 FROM table3",
+    "SELECT add(col2,col3) FROM table3"
+]
+jdb.setStorage(MemRDB(db))
+for q in query :
+    print(jdb.executeQuery(q))
