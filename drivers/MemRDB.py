@@ -3,6 +3,7 @@
 # tuple: 
 
 import sys
+from UserDefFunctions import UserDefFunctions
 
 class MemRDB :
     # initialize
@@ -156,21 +157,11 @@ class MemRDB :
     # - function must return tuple
     def call(self, r, func) :
         ret = []
+        fts = UserDefFunctions()
         for t in r :
-            f = getattr(self, func)(*t)
+            f = getattr(fts, func)(*t)
             ret.append(f)
         return ret
-
-    # function examples
-    # example: "select add('col1', 'col2') from r" return col1 + col2
-    # example: "select add('col1', 3) from r" return col1 + 3
-    def add(self, col1, col2) :
-        return (col1 + col2,)
-
-    # multiple constant to a one column
-    # example: "select multiple('col1', 5) from r" return col1 * 5
-    def multiple(self, col1, col2) :
-        return (col1*col2,)
 
 db = [
     {
@@ -207,7 +198,7 @@ ast = [
     ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]]],
     ['select', ['project', ['list', ['id', 'col2'], ['id', 'col3']]], ['from', ['as', 'table3', ['id', 'table3']]]],
     ['select', ['project', ['list', ['id', 'col2'], ['call', 'add', ['list', ['id', 'col2'], ['id', 'col3']]]]], ['from', ['as', 'table3', ['id', 'table3']]]],
-    ['select', ['project', ['list', ['path', ['id', 'table3'], ['id', 'col2']]]], ['from', ['as', 'table3', ['id', 'table3']]]]
+    ['select', ['project', ['list', ['path', ['id', 't3'], ['id', 'col2']]]], ['from', ['as', 't3', ['id', 'table3']]]]
 ]
 
 mrdb = MemRDB(db)
