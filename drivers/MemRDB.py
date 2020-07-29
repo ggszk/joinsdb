@@ -19,7 +19,6 @@ class MemRDB :
     # rel: relation to apply operators for recursion (at first call, rel must be {})
     # restriction
     # * only 1 relation
-    # * AS not supported
     def execute_ast(self, rel, ast) :
         ret = []
         if ast[0] == 'select' :
@@ -27,6 +26,9 @@ class MemRDB :
             r = self.execute_ast(self.db, ast[2])
             # project relation
             ret = self.execute_ast(r, ast[1])
+            # select tuples : no optimization
+            if len(ast) == 4 :
+                ret = self.execute_ast({'name':r['name'], 'meta':r['meta'], 'data':ret}, ast[3])
         elif ast[0] == 'from' :
             # Remark! rel means db
             # get relation name
@@ -79,6 +81,8 @@ class MemRDB :
                 for idx in ft_idxs :
                     ret = self.insert_relation(ret, ft_results[j], idx)
                     j = j + 1
+        elif ast[0] == 'where' :
+            ret = self.selection(rel, ast[1])
         elif ast[0] == 'call' :
             ret = self.call(rel, ast[1])
         
@@ -239,7 +243,8 @@ ast = [
     ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]]],
     ['select', ['project', ['list', ['id', 'col2'], ['id', 'col3']]], ['from', ['as', 'table3', ['id', 'table3']]]],
     ['select', ['project', ['list', ['id', 'col2'], ['call', 'add', ['list', ['id', 'col2'], ['id', 'col3']]]]], ['from', ['as', 'table3', ['id', 'table3']]]],
-    ['select', ['project', ['list', ['path', ['id', 't3'], ['id', 'col2']]]], ['from', ['as', 't3', ['id', 'table3']]]]
+    ['select', ['project', ['list', ['path', ['id', 't3'], ['id', 'col2']]]], ['from', ['as', 't3', ['id', 'table3']]]],
+    ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]], ['where', ['=', ['id', 'col2'], ['lit', 1]]]]
 ]
 
 rdb = MemRDB(db)
