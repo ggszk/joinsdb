@@ -9,6 +9,7 @@ from SimpleMultiDb import SimpleMultiDb
 from joinsdb import JoinsDb
 from MemRDB import MemRDB
 from VirtualDB import VirtualDB
+from PartiQL import PartiQL
 
 # adjacent list, both direction, element is (node_id, cost)
 g2 = [
@@ -102,3 +103,22 @@ param = {
 # Virtual DB
 vdb = VirtualDB(param)
 print(vdb.executeQuery("SELECT table3.col2, col3 FROM table3"))
+
+# PartiQL DB
+db = {
+    'hr': {
+        'employees': [
+            { 'id': 3, 'name': 'Bob_Smith',   'title': None }, 
+            { 'id': 4, 'name': 'Susan_Smith', 'title': 'Dev Mgr' },
+            { 'id': 6, 'name': 'Jane_Smith',  'title': 'Software Eng 2'}
+        ]
+    }
+}
+
+pdb = PartiQL(db)
+print(pdb.get_relation(db, 'hr'))
+r = db['hr']['employees']
+print(pdb.project(r, ['name', 'title']))
+print(pdb.selection(r, ['=', ['id', 'id'], ['lit', 4]]))
+print(pdb.executeQuery("SELECT name FROM employees"))
+print(pdb.executeQuery("SELECT id FROM employees WHERE id = 3"))

@@ -5,7 +5,6 @@
 
 import sys
 import os
-from UserDefFunctions import UserDefFunctions
 from lark import Lark
 from partiql_lang import Build_AST
 from MemRDB import MemRDB
