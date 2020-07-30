@@ -8,6 +8,7 @@ from MemGraph import MemGraph
 from SimpleMultiDb import SimpleMultiDb
 from joinsdb import JoinsDb
 from MemRDB import MemRDB
+from VirtualDB import VirtualDB
 
 # adjacent list, both direction, element is (node_id, cost)
 g2 = [
@@ -73,3 +74,31 @@ query = [
 jdb.setStorage(MemRDB(db))
 for q in query :
     print(jdb.executeQuery(q))
+
+param = {
+    # database connection information 
+    'db' : [
+        {
+            'name' : 'db1',
+            'type' : 'MemRDB',
+            'table' : [
+                # name : virtual table name to access
+                # local_name : real table name in local database
+                {'name' : 'table3', 'local_name' : 'table3'},
+                {'name' : 'table4', 'local_name' : 'table4'}
+            ],
+            # db connection information
+            # MemRDB : database data
+            'connect' : db
+        }
+    ],
+    # metadata for enriching database semantics
+    'metadata' : {
+        # relationships
+        # functions
+    }
+}
+
+# Virtual DB
+vdb = VirtualDB(param)
+print(vdb.executeQuery("SELECT table3.col2, col3 FROM table3"))
