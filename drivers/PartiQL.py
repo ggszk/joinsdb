@@ -36,11 +36,11 @@ class PartiQL :
         if ast[0] == 'select' :
             # get relation
             r = self.execute_ast(self.db, ast[2])
-            # project relation
-            ret = self.execute_ast(r, ast[1])
             # select tuples : no optimization
             if len(ast) == 4 :
-                ret = self.execute_ast(ret, ast[3])
+                r = self.execute_ast(r, ast[3])
+            # project relation
+            ret = self.execute_ast(r, ast[1])
         elif ast[0] == 'from' :
             # Remark! rel means db
             # get relation name
@@ -146,5 +146,5 @@ r = db['hr']['employees']
 print(pdb.project(r, ['name', 'title']))
 print(pdb.selection(r, ['=', ['id', 'id'], ['lit', 4]]))
 print(pdb.executeQuery("SELECT name FROM employees"))
-print(pdb.executeQuery("SELECT id FROM employees WHERE id = 3"))
+print(pdb.executeQuery("SELECT name FROM employees WHERE id = 3"))
 

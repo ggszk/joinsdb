@@ -60,7 +60,7 @@ def test_MemRDB() :
     assert [(1, )] == rdb.execute_ast({}, ast4)
 
     # partiql execution test
-    q1 = "SELECT table3.col2, col3 FROM table3"
+    q1 = "SELECT table3.col2 FROM table3 WHERE col3 = 3"
     q2 = "SELECT add(col2,col3) FROM table3"
-    assert [(1, 2), (2, 3)] == rdb.executeQuery(q1)
+    assert [(2,)] == rdb.executeQuery(q1)
     assert [(3,), (5,)] == rdb.executeQuery(q2)
