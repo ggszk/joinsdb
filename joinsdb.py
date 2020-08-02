@@ -104,11 +104,11 @@ class JoinsDb:
         cur_cost_f = 0
         cur_cost_t = 0
 
-        # tuple in priority queue: ("cost to the node", "node id", "parent of the node")
+        # tuple in priority queue: ("cost to the node", "node id", "parent of the node", "category(interest)")
         pq_f = []
         pq_t = []
-        heapq.heappush(pq_f, (0, from_id, None))
-        heapq.heappush(pq_t, (0, to_id, None))
+        heapq.heappush(pq_f, (0, from_id, None, self.getProperty(from_id)))
+        heapq.heappush(pq_t, (0, to_id, None, self.getProperty(to_id)))
 
         # for route tracking
         parent_f = {}
@@ -118,6 +118,13 @@ class JoinsDb:
         result = ()
         poi_id = None
 
+        # Minumum distance of 'from or to'-node to poi : for decision to stop
+        # If POI not found, this value is current node's cost
+        poi_min_cost_f = 0
+        poi_min_found_f = False
+        poi_min_cost_t = 0
+        poi_min_found_t = False
+
         # Path finding
         while(True) :
             # if one queue is empty, no route exit
@@ -125,8 +132,8 @@ class JoinsDb:
                 result = (None, [], None)
                 break
             # exit when cannot find shorter path (triangle inequality)
-			# (total cost) < (current f-side cost) + (current t-side cost)
-            if cur_cost_f + cur_cost_t > total_cost :
+			# (total cost) < (current f-side cost) + (minum t-side poi cost); for both side
+            if (cur_cost_f + poi_min_cost_t > total_cost) and (poi_min_cost_f + cur_cost_t > total_cost) :
                 # get route : from -> poi
                 tmp_id = poi_id
                 route_f = [poi_id]
@@ -151,12 +158,17 @@ class JoinsDb:
                 if fixed_f.get(cur_node_f_t[1]) :
                     continue
                 #  If POI is found, check total path
-                if cur_node_f_t[2] == interest :
+                if cur_node_f_t[3] == interest :
+                    if not poi_min_found_f :
+                        poi_min_cost_f = cur_node_f_t[0]
+                        poi_min_found_f = True
                     # if find the POI node in the other side, put into temp result
                     if fixed_t.get(cur_node_f_t[1]) :
                         poi_id = cur_node_f_t[1]
                         total_cost = cur_node_f_t[0] + cost_t[poi_id]
                 cur_cost_f = cur_node_f_t[0]
+                if not poi_min_found_f :
+                    poi_min_cost_f = cur_cost_f
                 cur_id_f = cur_node_f_t[1]
                 fixed_f[cur_id_f] = True
                 cost_f[cur_id_f] = cur_node_f_t[0]
@@ -176,13 +188,18 @@ class JoinsDb:
                 if fixed_t.get(cur_node_t_t[1]) :
                     continue
                 #  If POI is found, check total path
-                if cur_node_t_t[2] == interest :
+                if cur_node_t_t[3] == interest :
+                    if not poi_min_found_t :
+                        poi_min_cost_t = cur_node_t_t[0]
+                        poi_min_found_t = True
                     # print("t: poi: " + str(cur_node_t_t[1])) # for debug
                     # if find the POI node in the other side, put into temp result
                     if fixed_f.get(cur_node_t_t[1]) :
                         poi_id = cur_node_t_t[1]
                         total_cost = cur_node_t_t[0] + cost_f[poi_id]
                 cur_cost_t = cur_node_t_t[0]
+                if not poi_min_found_t :
+                    poi_min_cost_t = cur_cost_t
                 cur_id_t = cur_node_t_t[1]
                 fixed_t[cur_id_t] = True
                 cost_t[cur_id_t] = cur_node_t_t[0]

@@ -43,7 +43,7 @@ class SimpleMultiDb:
     # Get property of the node from SQLite
     def getProperty(self, node_id) :
         return_interests =  self.sqlite.executeQuery("select interest from " + self.table + " where n_id = " + str(node_id))
-        return return_interests[0]
+        return return_interests[0][0]
 
     # Get nodes by specifing attribute value
     def getNode(self, value) :

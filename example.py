@@ -6,6 +6,7 @@ import pprint
 sys.path.append('./drivers')
 from MemGraph import MemGraph
 from SimpleMultiDb import SimpleMultiDb
+from SimpleGraphDb import SimpleGraphDb
 from joinsdb import JoinsDb
 from MemRDB import MemRDB
 from VirtualDB import VirtualDB
@@ -38,6 +39,16 @@ print(result)
 result = jdb.one_poi_trip2(0, 8, 1)
 print(result)
 
+jdb.setStorage(SimpleGraphDb({
+        'uri' : "bolt://localhost:7687",
+        'user' : "neo4j",
+        'passwd' :"neo4jneo4j",
+        'label' : "g2"
+    }
+))
+result = jdb.one_poi_trip(0, 8, 1)
+print(result)
+
 # trip plannning query on simple multi database
 jdb.setStorage(SimpleMultiDb([{
         'uri' : "bolt://localhost:7687",
@@ -50,10 +61,10 @@ jdb.setStorage(SimpleMultiDb([{
         'table' : "g2_r"
     }
 ]))
-result = jdb.one_poi_trip(0, 8, 1)
-print(result)
-result = jdb.one_poi_trip2(0, 8, 1)
-print(result)
+#result = jdb.one_poi_trip(0, 8, 1)
+#print(result)
+#result = jdb.one_poi_trip2(0, 8, 1)
+#print(result)
 
 # Simple RDB on memory
 db = [

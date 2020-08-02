@@ -38,7 +38,7 @@ class SimpleGraphDb:
     def getProperty(self, node_id) :
         # default label
         label = self.label
-        cypher_str = "match (n:" + label + ") return n.interest"
+        cypher_str = "match (n:" + label + ") where n.n_id = " + str(node_id) + " return n.interest"
         result = self.neo4j.executeQuery(cypher_str)
         # result will be list with one element
-        return result[0]
+        return result[0][0]
