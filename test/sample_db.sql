@@ -1,4 +1,4 @@
-create table g2_r (n_id integer, interest integer);
+create table g2_r (n_id integer, category integer);
 insert into g2_r values (0, 0);
 insert into g2_r values (1, 0);
 insert into g2_r values (2, 0);
