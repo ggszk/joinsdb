@@ -129,22 +129,3 @@ class PartiQL :
         elif ast[2][0] == 'lit' :
             ret = condition(t[ast[1][1]], ast[2][1])
         return ret
-
-db = {
-    'hr': {
-        'employees': [
-            { 'id': 3, 'name': 'Bob_Smith',   'title': None }, 
-            { 'id': 4, 'name': 'Susan_Smith', 'title': 'Dev Mgr' },
-            { 'id': 6, 'name': 'Jane_Smith',  'title': 'Software Eng 2'}
-        ]
-    }
-}
-
-pdb = PartiQL(db)
-print(pdb.get_relation(db, 'hr'))
-r = db['hr']['employees']
-print(pdb.project(r, ['name', 'title']))
-print(pdb.selection(r, ['=', ['id', 'id'], ['lit', 4]]))
-print(pdb.executeQuery("SELECT name FROM employees"))
-print(pdb.executeQuery("SELECT name FROM employees WHERE id = 3"))
-

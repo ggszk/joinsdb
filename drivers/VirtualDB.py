@@ -90,5 +90,3 @@ param = {
     }
 }
 
-vdb = VirtualDB(param)
-print(vdb.executeQuery("SELECT table3.col2, col3 FROM table3"))

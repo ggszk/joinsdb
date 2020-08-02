@@ -25,7 +25,6 @@ g2 = [
     [(5, 2), (9, 7)],
     [(0, 6), (8, 7)]
 ]
-
 # if poi -> 1, else -> 0
 interest = [0, 0, 0, 1, 0, 0, 0, 0, 0, 1]
 
@@ -39,6 +38,7 @@ print(result)
 result = jdb.one_poi_trip2(0, 8, 1)
 print(result)
 
+# Simple Graph Database sample
 jdb.setStorage(SimpleGraphDb({
         'uri' : "bolt://localhost:7687",
         'user' : "neo4j",
@@ -61,10 +61,10 @@ jdb.setStorage(SimpleMultiDb([{
         'table' : "g2_r"
     }
 ]))
-#result = jdb.one_poi_trip(0, 8, 1)
-#print(result)
-#result = jdb.one_poi_trip2(0, 8, 1)
-#print(result)
+result = jdb.one_poi_trip(0, 8, 1)
+print(result)
+result = jdb.one_poi_trip2(0, 8, 1)
+print(result)
 
 # Simple RDB on memory
 db = [
@@ -87,6 +87,7 @@ jdb.setStorage(MemRDB(db))
 for q in query :
     print(jdb.executeQuery(q))
 
+# Virtual DB
 param = {
     # database connection information 
     'db' : [
@@ -110,8 +111,6 @@ param = {
         # functions
     }
 }
-
-# Virtual DB
 vdb = VirtualDB(param)
 print(vdb.executeQuery("SELECT table3.col2, col3 FROM table3"))
 
@@ -125,12 +124,8 @@ db = {
         ]
     }
 }
-
 pdb = PartiQL(db)
-print(pdb.get_relation(db, 'hr'))
 r = db['hr']['employees']
-print(pdb.project(r, ['name', 'title']))
-print(pdb.selection(r, ['=', ['id', 'id'], ['lit', 4]]))
 print(pdb.executeQuery("SELECT name FROM employees"))
 print(pdb.executeQuery("SELECT id FROM employees WHERE id = 3"))
 print(pdb.executeQuery("SELECT name FROM employees WHERE name = 'Bob_Smith'"))
