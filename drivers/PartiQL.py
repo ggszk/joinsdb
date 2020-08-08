@@ -32,6 +32,7 @@ class PartiQL :
     # restriction
     # * only 1 relation
     def execute_ast(self, rel, ast) :
+        print(ast)
         ret = []
         if ast[0] == 'select' :
             # get relation
@@ -43,10 +44,10 @@ class PartiQL :
             ret = self.execute_ast(r, ast[1])
         elif ast[0] == 'from' :
             # Remark! rel means db
-            # get relation name
-            r_name = ast[1][2][1]
+            # get relation path (or id)
+            r_path = ast[1][2]
             # find relation
-            ret = self.get_relation(self.db, r_name)
+            ret = self.get_relation(self.db, r_path)
         elif ast[0] == 'project' :
             # get column names
             i = 0
@@ -66,18 +67,20 @@ class PartiQL :
         return ret
 
     # find object(strucrured relation) by specifed key(relation name) recursively
-    def get_relation(self, rel, rel_name) :
-        ret = {}
-        for key in rel.keys() :
-            if key == rel_name :
-                ret = rel[key]
-            # not found : rel is not dict but list
-            elif type(rel[key]) == list :
-                ret = None
-            # find in child tree
-            else :
-                ret = self.get_relation(rel[key], rel_name)
-        return ret
+    def get_relation(self, rel, rel_path) :
+        # no path expression
+        if rel_path[0] == 'id' :
+            rel_name = rel_path[1]
+        elif rel_path[0] == 'path' :
+            child_rel = rel
+            for id in rel_path[1:] :
+                # found (name match)
+                if id[1] in child_rel.keys() :
+                    child_rel = child_rel[id[1]]
+                # not found
+                else :
+                    return None
+            return child_rel
 
     # projection operator
     # r: target relation

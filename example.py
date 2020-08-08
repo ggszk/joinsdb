@@ -125,7 +125,6 @@ db = {
     }
 }
 pdb = PartiQL(db)
-r = db['hr']['employees']
-print(pdb.executeQuery("SELECT name FROM employees"))
-print(pdb.executeQuery("SELECT id FROM employees WHERE id = 3"))
-print(pdb.executeQuery("SELECT name FROM employees WHERE name = 'Bob_Smith'"))
+print(pdb.executeQuery("SELECT name FROM hr.employees"))
+print(pdb.executeQuery("SELECT id FROM hr.employees WHERE id = 3"))
+print(pdb.executeQuery("SELECT name FROM hr.employees WHERE name = 'Bob_Smith'"))
