@@ -38,16 +38,22 @@ db = [
 def test_MemRDB() :
     # Relational operator test
     rdb = MemRDB(db)
-    r1 = db[2]['data']
-    r2 = db[3]['data']
+    r1 = db[2]
+    r2 = db[3]
     result = rdb.join(r1, r2, (0, 0), "eq")
-    assert [(1, 2, 1)] == rdb.project(result, (0, 1, 2))
-    assert [(3,), (5,)] == rdb.call(r1, 'add')
-    assert [(2,), (6,)] == rdb.call(r1, 'multiple')
+    ret = rdb.project(result, (0, 1, 2))
+    assert [(1, 2, 1)] == ret['data']
+    ret = rdb.call(r1, 'add')
+    assert [(3,), (5,)] == ret['data']
+    ret = rdb.call(r1, 'multiple')
+    assert [(2,), (6,)] == ret['data']
     r = db[2]
-    assert [(1, 2)] == rdb.selection(r, ['=', ['id', 'col2'], ['lit', 1]])
-    assert [(1, 2), (2, 3)] == rdb.selection(r, ['<', ['id', 'col2'], ['id', 'col3']])
-    assert [] == rdb.selection(r, ['and', ['=', ['id', 'col2'], ['lit', 1]], ['!=', ['id', 'col2'], ['lit', 1]]])
+    ret = rdb.selection(r, ['=', ['id', 'col2'], ['lit', 1]])
+    assert [(1, 2)] == ret['data']
+    ret = rdb.selection(r, ['<', ['id', 'col2'], ['id', 'col3']])
+    assert [(1, 2), (2, 3)] == ret['data']
+    ret = rdb.selection(r, ['and', ['=', ['id', 'col2'], ['lit', 1]], ['!=', ['id', 'col2'], ['lit', 1]]])
+    assert [] == ret['data']
 
     # ast execution test
     ast1 = ['select', ['project', ['list', ['id', 'col2']]], ['from', ['as', 'table3', ['id', 'table3']]]]
