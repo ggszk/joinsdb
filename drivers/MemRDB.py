@@ -37,8 +37,7 @@ class MemRDB :
             r = self.execute_ast(self.db, ast[2])
             # select tuples : no optimization
             if len(ast) == 4 :
-                r_data = self.execute_ast(r, ast[3])
-                r = {'name':r['name'], 'meta':r['meta'], 'data':r_data}
+                r = self.execute_ast(r, ast[3])
             # project relation
             ret = self.execute_ast(r, ast[1])
         elif ast[0] == 'from' :
@@ -70,8 +69,9 @@ class MemRDB :
                             if ii > 0 :
                                 ft_c_names.append(cc[1])
                             ii = ii + 1
-                        ft_rel = self.project(rel['data'], self.get_columns_index(rel['meta'], ft_c_names))
-                        ft_results.append(self.execute_ast(ft_rel, c))
+                        ft_rel = self.project(rel, self.get_columns_index(rel['meta'], ft_c_names))
+                        ft_result = self.execute_ast(ft_rel, c)
+                        ft_results.append(ft_result['data'])
                 i = i + 1
             # only functions case
             if len(ft_idxs) > 0 and len(c_names) == 0 :
@@ -83,11 +83,13 @@ class MemRDB :
                     i = i + 1
             # no functions case
             elif len(ft_idxs) == 0 and len(c_names) > 0 :
-                ret = self.project(rel['data'], self.get_columns_index(rel['meta'], c_names))
+                ret = self.project(rel, self.get_columns_index(rel['meta'], c_names))
+                ret = ret['data']
             # function and columns are mixed
             else :              
                 # execute projection
-                ret = self.project(rel['data'], self.get_columns_index(rel['meta'], c_names))
+                ret = self.project(rel, self.get_columns_index(rel['meta'], c_names))
+                ret = ret['data']
                 # insert function results
                 j = 0
                 for idx in ft_idxs :
@@ -138,7 +140,7 @@ class MemRDB :
         return ret
 
     # join operator
-    # r1, r2: target relations
+    # r1, r2: target relations ** with metadata **
     # index : index of join key. for example (1, 2) means key of t1 is 1, and key of t2 is 2 
     # operator : comparison operator for comparing keys: now only "eq"(=) is supported
     def join(self, r1, r2, index, operator) :
@@ -149,23 +151,30 @@ class MemRDB :
 
         # Nested loop join
         result = []
-        for t1 in r1 :
-            for t2 in r2 :
+        for t1 in r1['data'] :
+            for t2 in r2['data'] :
                 if t1[index[0]] == t2[index[1]] :
                     result.append(t1 + t2)
-        return result
+        # metadata
+        result_meta = r1['meta'] + r2['meta']
+
+        return {'data' : result, 'meta' : result_meta}
 
     # projection operator
-    # r: target relation
+    # r: target relation ** with metadata **
     # index : index of projected columns
     def project(self, r, index) :
         result = []
-        for t in r :
+        for t in r['data'] :
             result_tuple = ()
             for idx in index :
                 result_tuple = result_tuple + t[idx:idx+1]
             result.append(result_tuple)
-        return result
+        # metadata
+        result_meta = []
+        for idx in index :
+            result_meta.append(r['meta'][idx])
+        return {'data' : result, 'meta' : result_meta}
 
     # selection operator
     # r: target relation ** with metadata **
@@ -175,7 +184,7 @@ class MemRDB :
         for t in r['data'] :
             if self.eval_cond(r['meta'], t, cond) :
                     ret.append(t)
-        return ret
+        return {'name':r['name'], 'meta':r['meta'], 'data':ret}
     # condition evaluation of tuple using AST
     def eval_cond(self, meta, t, ast) :
         ret = False
@@ -215,7 +224,7 @@ class MemRDB :
     def call(self, r, func) :
         ret = []
         fts = UserDefFunctions()
-        for t in r :
+        for t in r['data'] :
             f = getattr(fts, func)(*t)
             ret.append(f)
-        return ret
+        return {'meta' : 'ft_result', 'data' : ret}
