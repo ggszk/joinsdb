@@ -8,6 +8,7 @@ import os
 from lark import Lark
 from partiql_lang import Build_AST
 from MemRDB import MemRDB
+from Neo4j import Neo4j
 
 class VirtualDB :
     # initialize
@@ -27,6 +28,8 @@ class VirtualDB :
         for d in self.db :
             if d['type'] == 'MemRDB' :
                 self.con.append(MemRDB(d['connect']))
+            elif d['type'] == 'Neo4j' :
+                self.con.append(Neo4j(d['connect']))
 
     # Execute partiql query
     def executeQuery(self, query):
@@ -53,40 +56,4 @@ class VirtualDB :
                     return (db_idx, local_name)
             db_idx = db_idx + 1
 
-db = [
-    {
-        'name' : 'table3',
-        'meta' : ("col2", "col3"),
-        'data' : [(1, 2), (2, 3)]
-    },
-    {
-        'name' : 'table4',
-        'meta' : ("col2", "col3"),
-        'data' : [(1, 4), (3, 5)]
-    }
-]
-
-param = {
-    # database connection information 
-    'db' : [
-        {
-            'name' : 'db1',
-            'type' : 'MemRDB',
-            'table' : [
-                # name : virtual table name to access
-                # local_name : real table name in local database
-                {'name' : 'table3', 'local_name' : 'table3'},
-                {'name' : 'table4', 'local_name' : 'table4'}
-            ],
-            # db connection information
-            # MemRDB : database data
-            'connect' : db
-        }
-    ],
-    # metadata for enriching database semantics
-    'metadata' : {
-        # relationships
-        # functions
-    }
-}
 

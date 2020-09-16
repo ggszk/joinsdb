@@ -1,5 +1,6 @@
 from neo4j import GraphDatabase
 from neo4j import Path
+from partiql_neo4j import PartiqlNeo4j
 
 # Storage engine for Neo4j
 class Neo4j :
@@ -43,3 +44,14 @@ class Neo4j :
         session.close()
         return result
 
+    # Execute AST
+    # rel: relation to apply operators for recursion (at first call, rel must be {})
+    # restriction
+    # * only 1 relation
+    def execute_ast(self, rel, ast) :
+        # metadata must be passed to PartiqlNeo4j
+        pn = PartiqlNeo4j({})
+        # ast_to_cypher
+        cypher = pn.ast_to_string_cypher(ast)
+        # executeQuery
+        return self.executeQuery(cypher)
